@@ -10,6 +10,14 @@ Depends on SBCL's sb-bsd-sockets
 
 ## Running
 
+### Simple TCP server
+
+```
+$ sbcl --load simple-tcp-server.lisp
+```
+
+### Full HTTP server
+
 ```
 $ sbcl --load server.lisp --eval "(server)"
 ```
