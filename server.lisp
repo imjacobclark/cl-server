@@ -17,21 +17,10 @@
 
 (defparameter *response-length* (length *response*))
 
-(defun format-line(line)
-  (format t "~a~%" line))
-
-(defun print-stream(stream)
-    (loop for line = (read-line stream)
-         while line 
-         do (format-line line))
-    (print "end")
-)
-
 (defun ok(stream)
-  (print-stream stream)
+  (when stream (format t "~a~%" (read-line stream)) nil)
   (write-string *response* stream) 
-  (finish-output stream)
-)
+  (finish-output stream))
 
 (defun stream-connection (socket) 
     (sb-bsd-sockets:socket-make-stream (sb-bsd-sockets:socket-accept socket) :output t :input t))
