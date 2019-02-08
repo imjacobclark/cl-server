@@ -1,43 +1,52 @@
 (require 'sb-bsd-sockets)
 
-(defparameter *response-content-length* 5)
 (defparameter *address* '(0 0 0 0))
 (defparameter *port* 8080)
-
-(defparameter CRLF (format nil "~C~C" #\return #\linefeed))
+(defparameter *body* "<html><head><title>cl-server</title><body><h1>cl-server</h1><p>inet-socket please!</body></html>")
+(defparameter *body-length* (length *body*))
+(defparameter *crlf* (format nil "~C~C" #\return #\linefeed))
 
 (defparameter *response*
   (concatenate 'string
-   "HTTP/1.1 200 OK" CRLF
-   (format nil "Content-Length: ~a" *response-content-length*) CRLF
-   "Content-Type: text/html" CRLF
-   CRLF
-   (coerce "Hello" 'string)))
+   "HTTP/1.1 200 OK" *crlf*
+   (format nil "Content-Length: ~a" *body-length*) *crlf*
+   "Content-Type: text/html" *crlf*
+   "X-Powered-By: cl-server" *crlf*
+   *crlf*
+   *body*))
 
 (defparameter *response-length* (length *response*))
+
+(defun format-line(line)
+  (format t "~a~%" line))
+
+(defun print-stream(stream)
+    (loop for line = (read-line stream)
+         while line 
+         do (format-line line))
+    (print "end")
+)
+
+(defun ok(stream)
+  ;; (print-stream stream)
+  (write-string *response* stream) 
+  (finish-output stream)
+)
 
 (defun stream-connection (socket) 
     (sb-bsd-sockets:socket-make-stream (sb-bsd-sockets:socket-accept socket) :output t :input t))
 
-(defun accept-respond-close (socket)
-  (let ((accepted-socket (sb-bsd-sockets:socket-accept socket)))
-    (unwind-protect
-        (sb-bsd-sockets:socket-send accepted-socket *response* *response-length* :external-format :utf-8)
-        (sb-bsd-sockets:socket-close accepted-socket))))
-
 (defun event-loop (socket)
   (loop  
     (with-open-stream 
-      (stream (stream-connection socket)) 
-      (write-string "test" stream) 
-      (finish-output stream)
+      (stream (stream-connection socket))
+      (ok stream)
     )
-  )
-  ;; (accept-respond-close socket)
-  (event-loop socket))
+  ))
 
 (defun create-socket ()
-  (let ((socket (make-instance 'sb-bsd-sockets:inet-socket :type :stream :protocol :tcp)))
+  (let 
+    ((socket (make-instance 'sb-bsd-sockets:inet-socket :type :stream :protocol :tcp)))
     (setf (sb-bsd-sockets:sockopt-reuse-address socket) t)
     (sb-bsd-sockets:socket-bind socket *address* *port*)
     (sb-bsd-sockets:socket-listen socket 1)
@@ -47,4 +56,6 @@
   (let ((socket (create-socket)))
     (unwind-protect
         (event-loop socket)
-        (sb-bsd-sockets:socket-close socket))))
+        (print "closing sockets...")
+        (sb-bsd-sockets:socket-close socket)
+        (print "bye"))))
