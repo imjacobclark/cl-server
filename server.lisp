@@ -26,9 +26,14 @@
         (sb-bsd-sockets:socket-close accepted-socket))))
 
 (defun event-loop (socket)
-  ;; (loop (with-open-stream (stream (stream-connection socket))
-  ;;   (print (read-line stream))))
-  (accept-respond-close socket)
+  (loop  
+    (with-open-stream 
+      (stream (stream-connection socket)) 
+      (write-string "test" stream) 
+      (finish-output stream)
+    )
+  )
+  ;; (accept-respond-close socket)
   (event-loop socket))
 
 (defun create-socket ()
