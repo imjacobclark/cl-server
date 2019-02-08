@@ -28,7 +28,7 @@
 )
 
 (defun ok(stream)
-  ;; (print-stream stream)
+  (print-stream stream)
   (write-string *response* stream) 
   (finish-output stream)
 )
