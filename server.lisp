@@ -41,7 +41,7 @@
     (sb-bsd-sockets:socket-listen socket 1)
     socket))
 
-(defun main ()
+(defun server ()
   (let ((socket (create-socket)))
     (unwind-protect
         (event-loop socket)
