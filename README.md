@@ -19,5 +19,5 @@ $ sbcl --load simple-tcp-server.lisp
 ### Full HTTP server
 
 ```
-$ sbcl --load server.lisp --eval "(server)"
+$ sbcl --load http-server.lisp --eval "(server)"
 ```
