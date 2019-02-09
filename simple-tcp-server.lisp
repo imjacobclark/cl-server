@@ -7,11 +7,11 @@
 ; Define our port to be 8080
 (defparameter *port* 8080)
 ; Connections to hold on the backlog
-(defparameter *socket-backlog 100)
+(defparameter *socket-backlog* 100)
 ; Response to emit from the server
 (defparameter *response* "hi")
 ; Length of the response
-(defparameter *response-lenth* (length *response*))
+(defparameter *response-length* (length *response*))
 
 ; Bind our inet-socket to 0.0.0.0:8080
 (sb-bsd-sockets:socket-bind *socket* *address* *port*)
