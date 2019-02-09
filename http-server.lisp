@@ -2,7 +2,7 @@
 
 (defparameter *address* '(0 0 0 0))
 (defparameter *port* 8080)
-(defparameter *body* "<html><head><title>cl-server</title><body><h1>cl-server</h1><p>inet-socket please!</body></html>")
+(defparameter *body* "<html><head><title>cl-server</title><body><h1>cl-server</h1><img src='https://rlv.zcache.com/alien_programming_dictatorship_off_lisp_classic_round_sticker-r8a3579175f5e45f194a655b0be16f548_v9waf_8byvr_307.jpg?rvtype=content' alt='Alien programming dictatorship of Lisp!'></body></html>")
 (defparameter *body-length* (length *body*))
 (defparameter *crlf* (format nil "~C~C" #\return #\linefeed))
 
