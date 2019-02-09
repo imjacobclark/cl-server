@@ -1,5 +1,5 @@
-# cl-server
-A Common Lisp HTTP server
+# cl-servers
+A variety of servers implemented in Common Lisp
 
 Depends on SBCL's sb-bsd-sockets
 
