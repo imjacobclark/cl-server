@@ -13,9 +13,21 @@
 ; Length of the response
 (defparameter *response-length* (length *response*))
 ; Receive buffer length
-(defparameter *receive-buffer-lenth* 2042)
+(defparameter *receive-buffer-lenth* 5)
 ; Buffer to recieve data sent from the client as an octet stream
-(defparameter *receive-buffer* (make-array *receive-buffer-lenth* :element-type '(unsigned-byte 8) :initial-element 0))
+(defparameter *receive-buffer* (make-array *receive-buffer-lenth* :element-type '(unsigned-byte 8) :initial-element 0 :adjustable :fill-pointer))
+
+(defun read-into-buffer(buffer socket bytes-left)
+  ;; TODO: Increase *receive-buffer* by 1 on every call of this method
+  (cond 
+    ; If there are no bytes left - we've reached the end of the input - print
+    ((= bytes-left 0) (force-print-buffer (octets-to-string buffer)))
+    ; There are bytes left, recurse until there are not
+    (t (read-into-buffer buffer socket (nth-value 1 (sb-bsd-sockets:socket-receive socket buffer (length buffer)))))))
+
+(defun force-print-buffer(data)
+  (format t data)
+  (force-output t))
 
 ; Bind our inet-socket to 0.0.0.0:8080
 (sb-bsd-sockets:socket-bind *socket* *address* *port*)
@@ -28,10 +40,8 @@
   (let (
       ; Accept incoming client connections
       (accepted-socket (sb-bsd-sockets:socket-accept *socket*)))
-    ; Recieve data as an octet stream into our receive buffer
-    (sb-bsd-sockets:socket-receive accepted-socket *receive-buffer* nil)
-    ; Convert our receive from octets to string and
-    (print (octets-to-string *receive-buffer*))
+    ; Read octet stream into buffer recursively
+    (read-into-buffer *receive-buffer* accepted-socket *receive-buffer-lenth*)
     ; Respond to accepted client connections with a UTF-8 string of "hi" with length 2
     (sb-bsd-sockets:socket-send accepted-socket *response* *response-length*)
     ; Close the client connection
