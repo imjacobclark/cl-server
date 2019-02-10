@@ -33,6 +33,6 @@
     ; Convert our receive from octets to string and
     (print (octets-to-string *receive-buffer*))
     ; Respond to accepted client connections with a UTF-8 string of "hi" with length 2
-    (sb-bsd-sockets:socket-send accepted-socket *response* *response-length* :external-format '(:utf-8 :replacement #\?))
+    (sb-bsd-sockets:socket-send accepted-socket *response* *response-length*)
     ; Close the client connection
     (sb-bsd-sockets:socket-close accepted-socket)))
