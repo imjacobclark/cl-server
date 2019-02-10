@@ -12,6 +12,8 @@
 (defparameter *response* "hi")
 ; Length of the response
 (defparameter *response-length* (length *response*))
+; Buffer to recieve data sent from the client as an octet stream
+(defparameter *receive-buffer* (make-array 2042 :element-type '(unsigned-byte 8) :initial-element 0))
 
 ; Bind our inet-socket to 0.0.0.0:8080
 (sb-bsd-sockets:socket-bind *socket* *address* *port*)
@@ -24,7 +26,13 @@
   (let (
       ; Accept incoming client connections
       (accepted-socket (sb-bsd-sockets:socket-accept *socket*)))
+    ; Recieve data as an octet stream into our receive buffer
+    (sb-bsd-sockets:socket-receive accepted-socket *receive-buffer* nil)
+    ; Convert our receive from octets to string and print
+    (print  (octets-to-string *receive-buffer*))
     ; Respond to accepted client connections with a UTF-8 string of "hi" with length 2
-    (sb-bsd-sockets:socket-send accepted-socket *response* *response-length* :external-format :utf-8)
+    (sb-bsd-sockets:socket-send accepted-socket *response* *response-length* :external-format '(:utf-8 :replacement #\?))
+    ; Reset our buffer
+    (fill *recieve-buffer* 0)
     ; Close the client connection
     (sb-bsd-sockets:socket-close accepted-socket)))

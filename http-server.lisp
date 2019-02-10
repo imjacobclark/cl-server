@@ -28,7 +28,7 @@
 (defun event-loop (socket)
   (loop  
     (with-open-stream 
-      (stream (stream-connection socket))
+      (stream (stream-connection socket) :external-format '(:utf-8 :replacement #\?))
       (ok stream)
     )
   ))
