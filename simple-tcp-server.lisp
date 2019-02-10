@@ -5,7 +5,7 @@
 ; Define our address to be 0.0.0.0 (public interface)
 (defparameter *address* '(0 0 0 0))
 ; Define our port to be 8080
-(defparameter *port* 8080)
+(defparameter *port* 8081)
 ; Connections to hold on the backlog
 (defparameter *socket-backlog* 100)
 ; Response to emit from the server
